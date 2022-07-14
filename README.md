@@ -76,7 +76,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     S -- Realtime Replication --> BQ
-    DML{Do DML changes} --> S[(Spanner)] -.- CS[ChangeStreams] 
+    DML{Data Factory} --> S[(Spanner)] -.- CS[ChangeStreams] 
     CS o--o W[Watcher]
     W --> PS{PubSub} -- Push Sub --> CR[Cloud Run] -- BQ write API --> BQ[(BigQuery)]
 ```
