@@ -22,8 +22,26 @@ flowchart LR
     end
 ```
 
+---
+
+### Change Stream to BigQuery "Out of the Box" DataFlow Template
 ```mermaid
 flowchart LR
-    CRJ[[Cloud Run Jobs]] -- Do DML changes --> CS[(Cloud Spanner)] -- ChangeStreams --> PS{PubSub} -- Push Sub --> CR[Cloud Run] -- BQ write API --> BQ[(BigQuery)]
+    CRJ[[Cloud Run Jobs]] -- Do DML changes --> CS[(Cloud Spanner)] --> ChS[[ChangeStream]] 
     CS <-- realtime replication of DML changes --> BQ
+    ChS --> DCR
+    
+    subgraph DataFlow
+        DCR[[Data Change Record]] --> FailSafe
+        DLQ[Dead Letter Queue]
+    subgraph FailSafe
+        ModJS[Model JSON]
+    end
+    DLQ --> Merge --> TDR[JSON to TableRow]
+    end
+    
+    ModJS --> Merge{Merge}
+    
+    
+    TDR[JSON to TableRow] --> BQ[(BigQuery)]
 ```
