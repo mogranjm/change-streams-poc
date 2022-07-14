@@ -5,7 +5,7 @@
 #### Desired Outcome
 ```mermaid
 flowchart LR
-    S[(Spanner)] -.- CS[ChangeStream] --> BQ[(BigQuery)]
+    S[(Spanner)] -.- &#x1F440 -.- CS[ChangeStream] -- &#x1f3c9 --> BQ[(BigQuery)]
     S <-- Realtime Replication --> BQ
 ```
 
