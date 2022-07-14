@@ -7,5 +7,5 @@
 
 gcloud spanner instances delete --quiet changestream-test-instance && \
 
-gcloud scheduler jobs pause spanner-read-changestream-trigger \
+gcloud scheduler jobs pause spanner-insert-random-user-trigger \
     --location=us-central1
