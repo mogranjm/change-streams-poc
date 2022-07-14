@@ -29,13 +29,8 @@ flowchart LR
     S <-- Realtime Replication --> BQ
 ```
 
-|              | Cloud Spanner             | BigQuery                     | 
-|--------------|---------------------------|------------------------------|
-| Processing   | OLTP (Read/Write)         | OLAP (Read)                  |
-| Purpose      | Transactions (Operations) | Data Warehousing (Analytics) |
-| Availability | Multi-regional            | Single Region                |
+---
 
-## Architecture
 ### Spanner Change Streams Basics
 ```mermaid
 flowchart LR
@@ -51,11 +46,15 @@ flowchart LR
 
 ---
 
-### Change Stream to BigQuery "Out of the Box" DataFlow Template
+## Architecture
+
+### DataFlow: GCP's Change Streams to BigQuery "out of the box" solution 
+
+DataFlow Template
 ```mermaid
 flowchart LR
-    CRJ[[Cloud Run Jobs]] -- Do DML changes --> CS[(Cloud Spanner)] --> ChS[[ChangeStream]] 
-    CS <-- realtime replication of DML changes --> BQ
+    CRJ[Cloud Run Jobs] -- Do DML changes --> CS[(Cloud Spanner)] --> ChS[[ChangeStream]] 
+    CS -- realtime replication of DML changes --> BQ
     ChS --> DCR
     
     subgraph DataFlow
