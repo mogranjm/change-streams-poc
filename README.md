@@ -1,6 +1,6 @@
 # Proof of Concept: Cloud Spanner Change Streams
 
-### Purpose: Realtime Data Replication between Cloud Spanner & BigQuery
+## Purpose: Realtime Data Replication between Cloud Spanner & BigQuery
 
 #### Spanner vs BigQuery
 
@@ -10,22 +10,22 @@
 | Purpose      | Transactions (Operations) | Data Warehousing (Analytics) |
 | Availability | Multi-regional            | Single Region                |
 
-**Cloud Spanner** 
+##### Cloud Spanner
 
 An RDBMS, designed for transactional workloads (insert, update) that require high reliability, and availability on a massive (unlimited) scale. 
 
 Spanner is perfect for e-commerce (AusPost parcel tracking), banking, etc. But exhibits (very, very) poor performance for analytical workloads (don't even try to `GROUP BY`).
 
-**BigQuery** 
+##### BigQuery
 
 A columnar formatted (non-relational) Data Warehousing solution.
 
 BQ is an absolute no-brainer for any kind of BI/Analytics application, but is terrible for transactional workloads. It does not handle `UPDATE` queries very well (columnar structure requires each column of a record to be retrieved individually).
 
-#### Desired Outcome
+#### Desired Outcome - ETL for CDC
 ```mermaid
 flowchart LR
-    S[(Spanner)] -.- &#x1F440 -.- CS[ChangeStream] -- &#x1f3c9 --> BQ[(BigQuery)]
+    S[(Spanner)] -.- &#x1F440 -.- CS[ChangeStream] -- &#x1f3c9 ETL --> BQ[(BigQuery)]
     S <-- Realtime Replication --> BQ
 ```
 
@@ -48,13 +48,13 @@ flowchart LR
 
 ## Architecture
 
-### DataFlow: GCP's Change Streams to BigQuery "out of the box" solution 
+### "Out of the Box" Solution: Dataflow
 
-DataFlow Template
+GCP Provides a readymade Dataflow Template
 ```mermaid
 flowchart LR
-    CRJ[Cloud Run Jobs] -- Do DML changes --> CS[(Cloud Spanner)] --> ChS[[ChangeStream]] 
-    CS -- realtime replication of DML changes --> BQ
+    DML{DML changes} --> CS[(Cloud Spanner)] -.- ChS[[ChangeStream]] 
+    CS -- Realtime Replication --> BQ
     ChS --> DCR
     
     subgraph DataFlow
