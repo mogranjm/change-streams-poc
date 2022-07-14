@@ -2,6 +2,13 @@
 
 ### Purpose: Realtime Data Replication between Cloud Spanner & BigQuery
 
+#### Desired Outcome
+```mermaid
+flowchart LR
+    S[(Spanner)] -.- CS[ChangeStream] --> BQ[(BigQuery)]
+    S <-- Realtime Replication --> BQ
+```
+
 |              | Cloud Spanner             | BigQuery                     | 
 |--------------|---------------------------|------------------------------|
 | Processing   | OLTP (Read/Write)         | OLAP (Read)                  |
