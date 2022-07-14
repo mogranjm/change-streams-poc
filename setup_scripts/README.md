@@ -49,7 +49,7 @@ PROJECT_ID=$(gcloud config list --format='value(core.project)')
 ### Create service account
 ```shell
 gcloud iam service-accounts create change-stream-service \
-    --display-name="Spanner Service" \
+    --display-name="ChangeStream Service" \
     --description="Service account for ChangeStream POC"
 ```
 
