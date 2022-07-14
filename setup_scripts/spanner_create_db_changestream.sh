@@ -23,4 +23,5 @@ gcloud spanner instances add-iam-policy-binding changestream-test-instance \
     --member="serviceAccount:change-stream-service@$PROJECT_ID.iam.gserviceaccount.com" \
     --role='roles/spanner.databaseUser'
 
-gcloud scheduler jobs resume spanner-insert-random-user-trigger
+gcloud scheduler jobs resume spanner-insert-random-user-trigger \
+    --location=us-central1
