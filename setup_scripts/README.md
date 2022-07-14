@@ -65,3 +65,17 @@ gcloud spanner instances add-iam-policy-binding changestream-test-instance \
 gcloud iam service-accounts keys create "change_stream_service_key.json" \
     --iam-account="change-stream-service@$PROJECT_ID.iam.gserviceaccount.com"
 ```
+
+# Spanner-to-BQ Dataflow template
+```shell
+gcloud dataflow flex-template run cloudstream-spanner-to-bq \
+  --template-file-gcs-location gs://dataflow-templates-us-central1/latest/flex/Spanner_Change_Streams_to_BigQuery \
+  --region us-central1 \    # Same region as Spanner Instance
+  --parameters \            # Flow requires information about the data the changestream is watching and the location of the CDC metadata
+    spannerInstanceId=changestream-test-instance, \
+    spannerDatabase=changestream-to-bq, \
+    spannerMetadataInstanceId=changestream-test-instance, \
+    spannerMetadataDatabase=changestream-to-bq, \
+    spannerChangeStreamName=test_stream, \
+    bigQueryDataset=bq_changestream_test
+```
