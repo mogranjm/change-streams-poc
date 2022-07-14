@@ -2,6 +2,8 @@
 
 gcloud config configurations activate alt
 
+PROJECT_ID=$(gcloud config list --format='value(core.project)')
+
 # Cloud Spanner requires a compute instance to provide and manage resources for the database service(s)
 gcloud spanner instances create changestream-test-instance \
     --config="regional-us-central1" \
