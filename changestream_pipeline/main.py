@@ -41,6 +41,7 @@ def process_changestream():
     # Requery for child partitions
     child_partitions = [query_changestream(db, start_time, partition_token=token) for token in child_tokens]
 
+    # This one takes a while
     data_change_records = [[record for record in stream] for stream in child_partitions]
 
     return data_change_records
