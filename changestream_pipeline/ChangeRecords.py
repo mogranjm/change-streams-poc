@@ -19,3 +19,8 @@ class DataChangeRecord(ChangeRecord):
     value_capture_type: str
     records_in_transaction: int
     partitions_in_transaction: int
+
+
+class ChildPartitionRecord(ChangeRecord):
+    record_sequence: str
+    child_partitions: List[Dict[str, List[str]]]
