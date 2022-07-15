@@ -23,3 +23,28 @@ def query_changestream(database, start: datetime, end: datetime = None, heartbea
         )
 
     return results
+
+
+def process_changestream():
+    wrench = spanner.Client()
+    instance = wrench.instance(SPANNER_INSTANCE)
+    db = instance.database(SPANNER_DATABASE)
+
+    start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
+
+    # Initiate Read Window (get Change Stream head)
+    stream_head = query_changestream(db, start_time)
+
+    # Get child tokens from stream head
+    child_tokens = [child_record[0][0][2][0][2][0][0] for child_record in stream_head]
+
+    # Get child partitions
+    child_partitions = [query_changestream(db, start_time, partition_token=token) for token in child_tokens]
+
+    data_change_records = [[record for record in stream] for stream in child_partitions]
+
+    return data_change_records
+
+if __name__ == '__main__':
+    recs = process_changestream()
+    print(recs)
