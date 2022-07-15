@@ -61,6 +61,45 @@ def process_changestream() -> List:
             new_record = ChildPartitionRecord(partition[0][0][0][2])
         processed_records.append(new_record)
 
+    # TEMP data_change_record EXTRACTION LOGIC - these indices are not replicated each time the stream is queried
+    #       logic above checks for ChangeRecord type
+    # dcr[0]: heartbeat records
+    # dcr[1]: child_partition_records
+    # dcr[2]: actual data_change_recards
+    for i in data_change_records[2]:
+        print('|--RECORD--|')
+        try:
+            print([{
+                'timestamp': j[0],
+                'record_sequence': j[1],
+                'transaction_id': j[2],
+                'is_last_record_in_transaction_in_partition': j[3],
+                'table_name': j[4],
+                'column_types': [
+                    {
+                        'name': type[0],
+                        'type': type[1]['code'],
+                        'is_primary_key': type[2],
+                        'ordinal_position': type[3]
+                    }
+                    for type in j[5]
+                ],
+                'changed_values': [
+                    {
+                        'key': value[0],
+                        'new_values': value[1],
+                        'old_values': value[2]
+                    } for value in j[6]
+                ],
+                'change_type': j[7],
+                'value_capture_type': j[8],
+                'records_in_transaction': j[9],
+                'partitions_in_transaction': j[10]
+            } for j in i[0][0][0]]
+            )
+        except IndexError:
+            pass
+
     return processed_records
 
 if __name__ == '__main__':
