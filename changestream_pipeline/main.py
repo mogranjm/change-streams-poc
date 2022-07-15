@@ -1,7 +1,11 @@
 import datetime
+from typing import List
+
 from google.cloud import spanner
 from google.cloud.spanner_v1.streamed import StreamedResultSet
 from config import SPANNER_INSTANCE, SPANNER_DATABASE
+
+from ChangeRecords import DataChangeRecord, HeartbeatRecord, ChildPartitionRecord
 
 TIMESTAMP_STRING = "%Y-%m-%dT%H:%M:%S.%fZ"
 
@@ -25,7 +29,7 @@ def query_changestream(database, start: datetime, end: datetime = None, heartbea
     return results
 
 
-def process_changestream():
+def process_changestream() -> List:
     wrench = spanner.Client()
     instance = wrench.instance(SPANNER_INSTANCE)
     db = instance.database(SPANNER_DATABASE)
@@ -44,7 +48,20 @@ def process_changestream():
     # This one takes a while
     data_change_records = [[record for record in stream] for stream in child_partitions]
 
-    return data_change_records
+    processed_records = []
+    for partition in data_change_records:
+        if partition[0][0][0][0] != []:
+            # Data change record
+            new_record = DataChangeRecord(partition[0][0][0][0])
+        elif partition[0][0][0][1] == []:
+            # heartbeat record
+            new_record = HeartbeatRecord(partition[0][0][0][1])
+        else:
+            # child_partition_record
+            new_record = ChildPartitionRecord(partition[0][0][0][2])
+        processed_records.append(new_record)
+
+    return processed_records
 
 if __name__ == '__main__':
     recs = process_changestream()
