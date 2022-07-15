@@ -4,11 +4,11 @@ import datetime
 
 
 @dataclass()
-class ChangeRecord:
+class HeartbeatRecord:
     timestamp: datetime
 
 
-class DataChangeRecord(ChangeRecord):
+class DataChangeRecord(HeartbeatRecord):
     record_sequence: str
     transaction_id: str
     is_last_record_in_transaction_partition: bool
@@ -21,6 +21,6 @@ class DataChangeRecord(ChangeRecord):
     partitions_in_transaction: int
 
 
-class ChildPartitionRecord(ChangeRecord):
+class ChildPartitionRecord(HeartbeatRecord):
     record_sequence: str
     child_partitions: List[Dict[str, List[str]]]
