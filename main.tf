@@ -81,6 +81,10 @@ resource "google_cloud_scheduler_job" "spanner_insert_random_user_trigger" {
   }
 }
 
+resource "google_pubsub_topic" "spanner_insert_random_user_topic" {
+  name = "spanner-insert-random-user"
+}
+
 resource "google_cloudfunctions_function" "spanner_insert_random_user" {
   name        = "spanner-data-factory"
   description = "A small function to insert a random user into a cloud spanner database"
