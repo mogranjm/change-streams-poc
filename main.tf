@@ -16,6 +16,7 @@ provider "google" {
 
 }
 
+# DATABASE CONFIG
 resource "google_spanner_instance" "spanner_instance" {
   name         = "changestreams-test-instance"
   config       = "regional-us-central1"
@@ -50,6 +51,9 @@ resource "google_spanner_database" "database" {
   deletion_protection = false
 }
 
+# SERVICE ACCOUNT
+# DATABASE USER
+# CLOUD FUNCTION EXECUTOR
 resource "google_service_account" "change_stream_service" {
   account_id   = "change-stream-service"
   display_name = "ChangeStream Service"
@@ -65,10 +69,7 @@ resource "google_spanner_instance_iam_binding" "database_user" {
   ]
 }
 
-resource "google_pubsub_topic" "spanner_insert_random_user_topic" {
-  name = "spanner-insert-random-user"
-}
-
+# SPANNER DATA FACTORY CONFIG
 resource "google_cloud_scheduler_job" "spanner_insert_random_user_trigger" {
   name = "trigger-insert-random-user"
   description = "Send a message to Pub/Sub to trigger a Cloud Function"
@@ -105,6 +106,7 @@ resource "google_cloudfunctions_function" "spanner_insert_random_user" {
 
 }
 
+# CHANGE STREAM "WATCHER"
 resource "google_pubsub_topic" "query_change_stream_topic" {
   name = "spanner-query-changestream"
 }
@@ -113,6 +115,7 @@ resource "google_pubsub_topic" "query_change_stream_topic" {
 # TODO resource "google_pubsub_topic" "change-stream-data-topic"
 # TODO resource "google_pubsub_subscription" "change-stream-data-subscriber"
 
+# CHANGE STREAM READER FUNCTION
 resource "google_cloudfunctions_function" "trigger_read_change_stream" {
   name        = "read-change-stream"
   description = "Query a Cloud Spanner Change Stream and pass CDC data to PubSub"
@@ -138,6 +141,7 @@ resource "google_cloudfunctions_function" "trigger_read_change_stream" {
 
 }
 
+# VARIABLES
 variable "GOOGLE_PROJECT_ID" {
   type    = string
   default = ""
