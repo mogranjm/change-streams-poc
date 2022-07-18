@@ -111,32 +111,41 @@ resource "google_cloudfunctions_function" "spanner_insert_random_user" {
 }
 
 # CHANGE STREAM "WATCHER"
-resource "google_pubsub_topic" "query_change_stream_topic" {
-  name = "spanner-query-changestream"
-}
+# NOT IN USE
+#resource "google_pubsub_topic" "query_change_stream_topic" {
+#  name = "spanner-query-changestream"
+#}
 
 # TODO resource "google_pubsub_schema" "change-stream-data-schema"
 # TODO resource "google_pubsub_topic" "change-stream-data-topic"
 # TODO resource "google_pubsub_subscription" "change-stream-data-subscriber"
 
-# CHANGE STREAM READER FUNCTION
-resource "google_cloudfunctions_function" "trigger_read_change_stream" {
-  name        = "read-change-stream"
-  description = "Query a Cloud Spanner Change Stream and pass CDC data to PubSub"
-  region      = var.REGION
-
-  service_account_email = "${google_service_account.change_stream_service.name}@${var.GOOGLE_PROJECT_ID}.iam.gserviceaccount.com"
-  event_trigger {
-    event_type = "google.pubsub.topic.publish"
-    resource   = google_pubsub_topic.query_change_stream_topic.name
-  }
-
-  runtime     = "python39"
-  entry_point = "read_changestream"
-
-  source_repository {
-    url = "https://source.developers.google.com/projects/${var.GOOGLE_PROJECT_ID}/repos/github_mogranjm_change-streams-poc/moveable-alias/main/paths"
-  }
+# CHANGE STREAM READER (PUBSUB WRITER) FUNCTION
+# NOT IN USE
+#resource "google_cloudfunctions_function" "trigger_read_change_stream" {
+#  name        = "read-change-stream"
+#  description = "Query a Cloud Spanner Change Stream and pass CDC data to PubSub"
+#  region      = var.REGION
+#
+#  service_account_email = "${google_service_account.change_stream_service.name}@${var.GOOGLE_PROJECT_ID}.iam.gserviceaccount.com"
+#  event_trigger {
+#    event_type = "google.pubsub.topic.publish"
+#    resource   = google_pubsub_topic.query_change_stream_topic.name
+#  }
+#
+#  runtime     = "python39"
+#  entry_point = "read_changestream"
+#
+#  source_repository {
+#    url = "https://source.developers.google.com/projects/${var.GOOGLE_PROJECT_ID}/repos/github_mogranjm_change-streams-poc/moveable-alias/main/paths"
+#  }
+#
+#  environment_variables = {
+#    SPANNER_INSTANCE = google_spanner_instance.spanner_instance.name
+#    SPANNER_DATABASE = google_spanner_database.database.name
+#  }
+#
+#}
 
   environment_variables = {
     SPANNER_INSTANCE = google_spanner_instance.spanner_instance.name
