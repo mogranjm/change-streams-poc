@@ -44,7 +44,7 @@ resource "google_spanner_database" "database" {
         registered DATE DEFAULT (CURRENT_DATE()),
         subscribed BOOL
         ) PRIMARY KEY (CustomerID)
-    EOF,
+EOF,
     "CREATE CHANGE STREAM test_stream FOR Customers"
   ]
   #  file("setup_scripts/spanner_setup.ddl")
