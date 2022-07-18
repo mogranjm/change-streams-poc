@@ -11,7 +11,7 @@ provider "google" {
   credentials = file(var.PATH_TO_CREDENTIALS)
 
   project = var.GOOGLE_PROJECT_ID
-  region  = "us-central1"
+  region  = var.REGION
   zone    = "us-central1-c"
 
 }
@@ -72,4 +72,9 @@ variable "GOOGLE_PROJECT_ID" {
 variable "PATH_TO_CREDENTIALS" {
   type    = string
   default = ""
+}
+
+variable "REGION" {
+  type    = string
+  default = "us-central1"
 }
