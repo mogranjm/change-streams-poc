@@ -76,7 +76,7 @@ resource "google_cloud_scheduler_job" "spanner_insert_random_user_trigger" {
   schedule    = "* * * * *"
 
   pubsub_target {
-    topic_name = google_pubsub_topic.spanner_insert_random_user_topic.name
+    topic_name = google_pubsub_topic.spanner_insert_random_user_topic.id
     data       = base64encode("new-user")
   }
 }
