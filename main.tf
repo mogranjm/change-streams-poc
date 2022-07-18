@@ -63,7 +63,7 @@ resource "google_service_account" "change_stream_service" {
 resource "google_spanner_instance_iam_binding" "database_user" {
   # databaseUser permissions required to create a Spanner.Client() session within the Cloud Function
   instance = google_spanner_instance.spanner_instance.name
-  role     = "roles/databaseUser"
+  role     = "roles/spanner.databaseUser"
   members = [
     "serviceAccount:change-stream-service@${var.GOOGLE_PROJECT_ID}.iam.gserviceaccount.com"
   ]
