@@ -44,7 +44,7 @@ resource "google_spanner_database" "database" {
       subscribed BOOL
       ) PRIMARY KEY (CustomerID)
 EOH
-  ,
+    ,
     "CREATE CHANGE STREAM test_stream FOR Customers"
   ]
   #  file("setup_scripts/spanner_setup.ddl")
@@ -60,13 +60,12 @@ resource "google_service_account" "change_stream_service" {
   description  = "Service account for ChangeStream POC"
 }
 
-resource "google_spanner_instance_iam_binding" "database_user" {
+resource "google_spanner_instance_iam_member" "database_user" {
   # databaseUser permissions required to create a Spanner.Client() session within the Cloud Function
   instance = google_spanner_instance.spanner_instance.name
   role     = "roles/spanner.databaseUser"
-  members = [
-    "serviceAccount:change-stream-service@${var.GOOGLE_PROJECT_ID}.iam.gserviceaccount.com"
-  ]
+  member   = "serviceAccount:${google_service_account.change_stream_service.email}"
+  #  member = "serviceAccount:change-stream-service@${var.GOOGLE_PROJECT_ID}.iam.gserviceaccount.com"
 }
 
 # SPANNER DATA FACTORY CONFIG
