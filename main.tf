@@ -69,6 +69,19 @@ resource "google_spanner_instance_iam_member" "database_user" {
 }
 
 # SPANNER DATA FACTORY CONFIG
+resource "google_service_account" "cloud-functions-invoker" {
+  account_id   = "cloud-function-invoker"
+  display_name = "Cloud Function Invoker"
+  description  = "Service Account to run Cloud Functions"
+}
+resource "google_cloudfunctions_function_iam_member" "function-invoker" {
+  project        = google_cloudfunctions_function.spanner_insert_random_user.project
+  region         = google_cloudfunctions_function.spanner_insert_random_user.region
+  cloud_function = google_cloudfunctions_function.spanner_insert_random_user.name
+  role           = "roles/iam.serviceAccountUser"
+  member         = "serviceAccount:${google_service_account.cloud-functions-invoker.email}"
+}
+
 resource "google_cloud_scheduler_job" "spanner_insert_random_user_trigger" {
   name        = "trigger-insert-random-user"
   description = "Send a message to Pub/Sub to trigger a Cloud Function"
