@@ -100,7 +100,7 @@ resource "google_cloudfunctions_function" "spanner_insert_random_user" {
   entry_point = "insert_random_user"
 
   source_repository {
-    url = "https://source.developers.google.com/projects/${var.GOOGLE_PROJECT_ID}/repos/github_mogranjm_spanner-data-factory/moveable-alias/main/paths"
+    url = "https://source.developers.google.com/projects/${var.GOOGLE_PROJECT_ID}/repos/github_mogranjm_spanner-data-factory/moveable-aliases/main/paths"
   }
 
   environment_variables = {
