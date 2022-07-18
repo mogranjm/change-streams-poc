@@ -71,13 +71,13 @@ resource "google_spanner_instance_iam_binding" "database_user" {
 
 # SPANNER DATA FACTORY CONFIG
 resource "google_cloud_scheduler_job" "spanner_insert_random_user_trigger" {
-  name = "trigger-insert-random-user"
+  name        = "trigger-insert-random-user"
   description = "Send a message to Pub/Sub to trigger a Cloud Function"
-  schedule = "* * * * *"
+  schedule    = "* * * * *"
 
   pubsub_target {
     topic_name = google_pubsub_topic.spanner_insert_random_user_topic.name
-    data = base64encode("new-user")
+    data       = base64encode("new-user")
   }
 }
 
