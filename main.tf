@@ -16,6 +16,12 @@ provider "google" {
 
 }
 
+
+resource "google_service_account" "change_stream_service" {
+  account_id   = change-stream-service
+  display_name = "ChangeStream Service"
+}
+
 resource "google_spanner_instance" "spanner_instance" {
   config       = "regional-us-central1"
   display_name = "Test Spanner Instance"
