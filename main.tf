@@ -16,12 +16,26 @@ provider "google" {
 
 }
 
+resource "google_spanner_instance" "spanner_instance" {
+  config       = "regional-us-central1"
+  display_name = "Test Spanner Instance"
+  num_nodes    = 1
+}
+
+resource "google_spanner_database" "database" {
+  instance            = google_spanner_instance.changestream-test-instance
+  display_name        = "Test Spanner Database"
+  name                = "changestream-to-bq"
+  ddl                 = file("setup_scripts/spanner_setup.ddl")
+  deletion_protection = false
+}
+
 variable "GOOGLE_PROJECT_ID" {
   type    = string
   default = ""
 }
 
 variable "PATH_TO_CREDENTIALS" {
-  type = string
+  type    = string
   default = ""
 }
