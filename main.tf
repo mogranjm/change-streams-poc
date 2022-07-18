@@ -43,9 +43,9 @@ resource "google_spanner_database" "database" {
         addr_pc STRING(1024),
         registered DATE DEFAULT (CURRENT_DATE()),
         subscribed BOOL
-        ) PRIMARY KEY (CustomerID);,
+        ) PRIMARY KEY (CustomerID)
+    EOF,
     "CREATE CHANGE STREAM test_stream FOR Customers"
-    EOF
   ]
   #  file("setup_scripts/spanner_setup.ddl")
   deletion_protection = false
