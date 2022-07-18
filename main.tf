@@ -8,10 +8,20 @@ terraform {
 }
 
 provider "google" {
-  credentials = file("/Users/jamesmorgan/Documents/gcp/servian-u-practice-79b61e33b0ae.json")
+  credentials = file("${var.PATH_TO_CREDENTIALS}")
 
-  project = "servian-u-practice"
+  project = var.GOOGLE_PROJECT_ID
   region  = "us-central1"
   zone    = "us-central1-c"
 
+}
+
+variable "GOOGLE_PROJECT_ID" {
+  type    = string
+  default = ""
+}
+
+variable "PATH_TO_CREDENTIALS" {
+  type = string
+  default = ""
 }
