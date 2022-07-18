@@ -17,6 +17,7 @@ provider "google" {
 }
 
 resource "google_spanner_instance" "spanner_instance" {
+  name         = "changestreams-test-instance"
   config       = "regional-us-central1"
   display_name = "Test Spanner Instance"
   num_nodes    = 1
@@ -53,6 +54,14 @@ resource "google_service_account" "change_stream_service" {
   account_id   = "change-stream-service"
   display_name = "ChangeStream Service"
   description = "Service account for ChangeStream POC"
+}
+
+resource "google_spanner_instance_iam_binding" "database_user" {
+  instance = google_spanner_instance.spanner_instance.name
+  role     = "roles/databaseUser"
+  members = [
+    "serviceAccount:change-stream-service@${var.GOOGLE_PROJECT_ID}.iam.gserviceaccount.com"
+  ]
 }
 
 variable "GOOGLE_PROJECT_ID" {
