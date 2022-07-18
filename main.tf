@@ -64,6 +64,38 @@ resource "google_spanner_instance_iam_binding" "database_user" {
   ]
 }
 
+resource "google_pubsub_topic" "trigger_changestream_query" {
+  name = "spanner-query-changestream"
+}
+
+resource "google_cloudfunctions_function" "trigger_read_change_stream" {
+  name        = "read-change-stream"
+  description = "Query a Cloud Spanner Change Stream and pass CDC data to PubSub"
+  region      = var.REGION
+
+  service_account_email = "${google_service_account.change_stream_service.name}@${var.GOOGLE_PROJECT_ID}.iam.gserviceaccount.com"
+  event_trigger {
+    event_type = "google.pubsub.topic.publish"
+    resource   = google_pubsub_topic.trigger_changestream_query.name
+  }
+
+  runtime     = "python39"
+  entry_point = "read_changestream"
+
+  source_repository {
+    url = "https://source.developers.google.com/projects/${var.GOOGLE_PROJECT_ID}/repos/github_mogranjm_change-streams-poc/moveable-alias/main/paths"
+  }
+
+  environment_variables = {
+    SPANNER_INSTANCE = google_spanner_instance.spanner_instance.name
+    SPANNER_DATABASE = google_spanner_database.database.name
+  }
+
+}
+# TODO resource "google_pubsub_topic" ""
+# TODO resource "google_pubsub_subscription" ""
+# TODO resource "google_pubsub_schema" ""
+
 variable "GOOGLE_PROJECT_ID" {
   type    = string
   default = ""
