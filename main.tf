@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "google" {
-  credentials = file("${var.PATH_TO_CREDENTIALS}")
+  credentials = file(var.PATH_TO_CREDENTIALS)
 
   project = var.GOOGLE_PROJECT_ID
   region  = "us-central1"
