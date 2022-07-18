@@ -66,7 +66,7 @@ resource "google_spanner_instance_iam_binding" "database_user" {
 }
 
 resource "google_pubsub_topic" "spanner_insert_random_user_topic" {
-  name = "spanner-query-changestream"
+  name = "spanner-insert-random-user"
 }
 
 resource "google_cloud_scheduler_job" "spanner_insert_random_user_trigger" {
@@ -105,6 +105,10 @@ resource "google_cloudfunctions_function" "spanner_insert_random_user" {
 
 }
 
+resource "google_pubsub_topic" "query_change_stream_topic" {
+  name = "spanner-query-changestream"
+}
+
 # TODO resource "google_pubsub_schema" "change-stream-data-schema"
 # TODO resource "google_pubsub_topic" "change-stream-data-topic"
 # TODO resource "google_pubsub_subscription" "change-stream-data-subscriber"
@@ -117,7 +121,7 @@ resource "google_cloudfunctions_function" "trigger_read_change_stream" {
   service_account_email = "${google_service_account.change_stream_service.name}@${var.GOOGLE_PROJECT_ID}.iam.gserviceaccount.com"
   event_trigger {
     event_type = "google.pubsub.topic.publish"
-    resource   = google_pubsub_topic.trigger_changestream_query.name
+    resource   = google_pubsub_topic.query_change_stream_topic.name
   }
 
   runtime     = "python39"
