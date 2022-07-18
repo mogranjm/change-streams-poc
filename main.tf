@@ -90,7 +90,7 @@ resource "google_cloudfunctions_function" "spanner_insert_random_user" {
   description = "A small function to insert a random user into a cloud spanner database"
   region      = var.REGION
 
-  service_account_email = "${google_service_account.change_stream_service.name}@${var.GOOGLE_PROJECT_ID}.iam.gserviceaccount.com"
+  service_account_email = google_service_account.change_stream_service.name
   event_trigger {
     event_type = "google.pubsub.topic.publish"
     resource   = google_pubsub_topic.spanner_insert_random_user_topic.name
