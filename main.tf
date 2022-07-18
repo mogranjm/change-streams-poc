@@ -65,9 +65,49 @@ resource "google_spanner_instance_iam_binding" "database_user" {
   ]
 }
 
-resource "google_pubsub_topic" "trigger_changestream_query" {
+resource "google_pubsub_topic" "spanner_insert_random_user_topic" {
   name = "spanner-query-changestream"
 }
+
+resource "google_cloud_scheduler_job" "spanner_insert_random_user_trigger" {
+  name = "trigger-insert-random-user"
+  description = "Send a message to Pub/Sub to trigger a Cloud Function"
+  schedule = "* * * * *"
+
+  pubsub_target {
+    topic_name = google_pubsub_topic.spanner_insert_random_user_topic.name
+    data = base64decode("new-user")
+  }
+}
+
+resource "google_cloudfunctions_function" "spanner_insert_random_user" {
+  name        = "spanner-data-factory"
+  description = "A small function to insert a random user into a cloud spanner database"
+  region      = var.REGION
+
+  service_account_email = "${google_service_account.change_stream_service.name}@${var.GOOGLE_PROJECT_ID}.iam.gserviceaccount.com"
+  event_trigger {
+    event_type = "google.pubsub.topic.publish"
+    resource   = google_pubsub_topic.spanner_insert_random_user_topic.name
+  }
+
+  runtime     = "python39"
+  entry_point = "insert_random_user"
+
+  source_repository {
+    url = "https://source.developers.google.com/projects/${var.GOOGLE_PROJECT_ID}/repos/github_mogranjm_spanner-data-factory/moveable-alias/main/paths"
+  }
+
+  environment_variables = {
+    SPANNER_INSTANCE = google_spanner_instance.spanner_instance.name
+    SPANNER_DATABASE = google_spanner_database.database.name
+  }
+
+}
+
+# TODO resource "google_pubsub_schema" "change-stream-data-schema"
+# TODO resource "google_pubsub_topic" "change-stream-data-topic"
+# TODO resource "google_pubsub_subscription" "change-stream-data-subscriber"
 
 resource "google_cloudfunctions_function" "trigger_read_change_stream" {
   name        = "read-change-stream"
@@ -93,9 +133,6 @@ resource "google_cloudfunctions_function" "trigger_read_change_stream" {
   }
 
 }
-# TODO resource "google_pubsub_schema" "change-stream-data-schema"
-# TODO resource "google_pubsub_topic" "change-stream-data-topic"
-# TODO resource "google_pubsub_subscription" "change-stream-data-subscriber"
 
 variable "GOOGLE_PROJECT_ID" {
   type    = string
