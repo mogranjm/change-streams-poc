@@ -57,6 +57,7 @@ resource "google_service_account" "change_stream_service" {
 }
 
 resource "google_spanner_instance_iam_binding" "database_user" {
+  # databaseUser permissions required to create a Spanner.Client() session within the Cloud Function
   instance = google_spanner_instance.spanner_instance.name
   role     = "roles/databaseUser"
   members = [
@@ -92,9 +93,9 @@ resource "google_cloudfunctions_function" "trigger_read_change_stream" {
   }
 
 }
-# TODO resource "google_pubsub_topic" ""
-# TODO resource "google_pubsub_subscription" ""
-# TODO resource "google_pubsub_schema" ""
+# TODO resource "google_pubsub_schema" "change-stream-data-schema"
+# TODO resource "google_pubsub_topic" "change-stream-data-topic"
+# TODO resource "google_pubsub_subscription" "change-stream-data-subscriber"
 
 variable "GOOGLE_PROJECT_ID" {
   type    = string
