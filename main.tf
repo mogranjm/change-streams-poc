@@ -147,12 +147,7 @@ resource "google_cloudfunctions_function" "spanner_insert_random_user" {
 #
 #}
 
-  environment_variables = {
-    SPANNER_INSTANCE = google_spanner_instance.spanner_instance.name
-    SPANNER_DATABASE = google_spanner_database.database.name
-  }
-
-}
+# TODO BIGQUERY WRITER (PUBSUB READER) FUNCTION
 
 # VARIABLES
 variable "GOOGLE_PROJECT_ID" {
