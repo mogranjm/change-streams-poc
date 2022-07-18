@@ -24,8 +24,8 @@ resource "google_spanner_instance" "spanner_instance" {
 }
 
 resource "google_spanner_database" "database" {
-  instance     = google_spanner_instance.spanner_instance.name
-  name         = "changestream-to-bq"
+  instance = google_spanner_instance.spanner_instance.name
+  name     = "changestream-to-bq"
   ddl = [
     <<EOF
       CREATE TABLE Customers (
@@ -53,7 +53,7 @@ resource "google_spanner_database" "database" {
 resource "google_service_account" "change_stream_service" {
   account_id   = "change-stream-service"
   display_name = "ChangeStream Service"
-  description = "Service account for ChangeStream POC"
+  description  = "Service account for ChangeStream POC"
 }
 
 resource "google_spanner_instance_iam_binding" "database_user" {
