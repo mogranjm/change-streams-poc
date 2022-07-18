@@ -29,10 +29,29 @@ resource "google_spanner_instance" "spanner_instance" {
 }
 
 resource "google_spanner_database" "database" {
-  instance            = google_spanner_instance.changestream-test-instance
-  display_name        = "Test Spanner Database"
-  name                = "changestream-to-bq"
-  ddl                 = file("setup_scripts/spanner_setup.ddl")
+  instance     = google_spanner_instance.spanner_instance.name
+  name         = "changestream-to-bq"
+  ddl = [
+    <<EOF
+      CREATE TABLE Customers (
+        CustomerID INT64 NOT NULL,
+        fname STRING(1024),
+        lname STRING(1024),
+        username STRING(1024),
+        phone STRING(1024),
+        email STRING(1024),
+        addr_street STRING(1024),
+        addr_city STRING(1024),
+        addr_state STRING(1024),
+        addr_country STRING(1024),
+        addr_pc STRING(1024),
+        registered DATE DEFAULT (CURRENT_DATE()),
+        subscribed BOOL
+        ) PRIMARY KEY (CustomerID);,
+    "CREATE CHANGE STREAM test_stream FOR Customers"
+    EOF
+  ]
+  #  file("setup_scripts/spanner_setup.ddl")
   deletion_protection = false
 }
 
